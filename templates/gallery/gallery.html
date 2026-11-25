@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Gallery · Frame{% endblock %}
+{% block content %}
+<div class="gallery-head">
+  <h1>Gallery</h1>
+  <div class="tabs" role="tablist">
+    <a href="?show=all" class="{% if scope != 'mine' %}active{% endif %}">Everyone</a>
+    <a href="?show=mine" class="{% if scope == 'mine' %}active{% endif %}">My photos</a>
+  </div>
+</div>
+
+{% if photos %}
+  <div class="masonry">
+    {% for photo in photos %}
+      <figure class="tile">
+        <button type="button" class="tile-open"
+                data-full="{{ photo.image.url }}"
+                data-title="{{ photo.title }}"
+                data-caption="{{ photo.caption }}"
+                data-owner="{{ photo.owner.username }}"
+                aria-label="Open {{ photo.title }}">
+          <img src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy">
+        </button>
+        <figcaption>
+          <div class="tile-title">{{ photo.title }}</div>
+          <div class="tile-meta">by {{ photo.owner.username }}, {{ photo.uploaded_at|date:"j M Y" }}</div>
+          {% if photo.owner_id == user.id %}
+            <form method="post" action="{% url 'delete_photo' photo.pk %}"
+                  onsubmit="return confirm('Delete this photo?');">
+              {% csrf_token %}
+              <button type="submit" class="link-button danger">Delete</button>
+            </form>
+          {% endif %}
+        </figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">
+    <p>{% if scope == 'mine' %}You haven't added any photos yet.{% else %}The gallery is empty.{% endif %}</p>
+    <a class="btn" href="{% url 'upload' %}">Add the first photo</a>
+  </div>
+{% endif %}
+
+<dialog id="lightbox" class="lightbox">
+  <button type="button" class="lightbox-close" aria-label="Close">Close</button>
+  <img id="lightbox-img" alt="">
+  <div class="lightbox-info">
+    <strong id="lightbox-title"></strong>
+    <span id="lightbox-caption"></span>
+    <small id="lightbox-owner"></small>
+  </div>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/gallery.js' %}"></script>
+{% endblock %}

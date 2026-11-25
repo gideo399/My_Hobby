@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Sign up · Frame{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Create your account</h1>
+  <p class="lede">Join to browse the gallery and share your own photos.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "registration/_form_fields.html" %}
+    <button type="submit" class="btn">Create account</button>
+  </form>
+  <p class="alt">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+</section>
+{% endblock %}
