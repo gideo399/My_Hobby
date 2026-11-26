@@ -1,0 +1,4 @@
+ursina>=7.0.0
+numpy>=1.24
+Pillow>=10.0
+# panda3d is installed automatically as a dependency of ursina
